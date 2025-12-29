@@ -1,41 +1,94 @@
 # SecurePassVe
 
-SecurePassVe is a learning project where I build a password manager to practice full-stack development and security fundamentals.
+SecurePassVe is a **learning project** to build a password manager from scratch, with a strong focus on **backend architecture**, **security fundamentals**, and a future **zero‑knowledge design**.
 
-Planned scope:
-- Backend API (local first, later potentially deployable)
-- Web frontend
-- Encrypted vault storage with the goal of client-side encryption (the backend should store ciphertext only)
+This project is **not production software**. The goal is understanding *how* things work, not shipping a finished product.
 
-Disclaimer:
-This project is under active development and is not intended for storing real passwords.
+---
 
-## Repository structure
+## Goals
 
-- `backend/` — Python/FastAPI backend (current focus)
-- `frontend/` — planned
+- Learn backend development with FastAPI
+- Understand security fundamentals (no custom crypto)
+- Work towards a zero‑knowledge architecture
+  - Client‑side encryption
+  - Backend stores **ciphertext only**
+  - Master password never leaves the client
+- Clean structure, versioned API, and explicit error contracts
 
-## Run the backend locally (Windows / PowerShell)
+---
 
-Prerequisites:
-- Python 3.12+
-- Git
+## Backend
 
-Steps:
+### Tech stack
 
-```powershell
+- Python **3.12+**
+- FastAPI
+- Uvicorn
+- src‑layout
+- Ruff (linting/formatting)
+- pytest (introduced gradually)
+
+---
+
+## Setup
+
+From the repository root:
+
+```bash
 cd backend
-py -m venv .venv
-.venv\Scripts\Activate.ps1
-py -m pip install -U pip
-pip install -e ".[dev]"
-uvicorn securepassve_backend.main:app --reload
+python -m venv .venv
 ```
 
-Then:
-- Healthcheck: http://127.0.0.1:8000/health
-- API docs: http://127.0.0.1:8000/docs
+Activate the virtual environment (Windows PowerShell):
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+Install dependencies (editable + dev extras):
+
+```bash
+pip install -e ".[dev]"
+```
+
+---
+
+## Environment variables
+
+The backend reads configuration from environment variables.
+
+Currently used:
+
+- `SECUREPASSVE_ENV` – application environment (`dev` | `prod`)
+
+Recommended local setup:
+
+Create a local `.env` file in `backend/` (not committed):
+
+```env
+SECUREPASSVE_ENV=dev
+```
+
+Start the server with:
+
+```bash
+uvicorn securepassve_backend.main:app --reload --env-file .env
+```
+
+---
+
+## API documentation
+
+Interactive API docs are available at:
+
+```
+http://127.0.0.1:8000/docs
+```
+
+---
 
 ## License
 
 MIT
+
