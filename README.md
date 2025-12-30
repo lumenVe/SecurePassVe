@@ -1,94 +1,95 @@
 # SecurePassVe
 
-SecurePassVe is a **learning project** to build a password manager from scratch, with a strong focus on **backend architecture**, **security fundamentals**, and a future **zero‑knowledge design**.
+SecurePassVe is a **learning project** to build a password manager from scratch with a focus on full‑stack development and security fundamentals.
 
-This project is **not production software**. The goal is understanding *how* things work, not shipping a finished product.
-
----
-
-## Goals
-
-- Learn backend development with FastAPI
-- Understand security fundamentals (no custom crypto)
-- Work towards a zero‑knowledge architecture
-  - Client‑side encryption
-  - Backend stores **ciphertext only**
-  - Master password never leaves the client
-- Clean structure, versioned API, and explicit error contracts
+This is **not production software**. The goal is to learn best practices (no custom crypto) and to work towards a **zero‑knowledge** architecture:
+- Client‑side encryption
+- Backend stores **ciphertext only**
+- Master password never leaves the client
 
 ---
 
-## Backend
+## Current status (backend)
 
-### Tech stack
-
-- Python **3.12+**
-- FastAPI
-- Uvicorn
-- src‑layout
-- Ruff (linting/formatting)
-- pytest (introduced gradually)
+Backend is a versioned FastAPI API under **`/api/v1`** with:
+- System endpoints:
+  - `GET /api/v1/health`
+  - `GET /api/v1/meta`
+- Vault (starter):
+  - `GET /api/v1/vault/status?userID=<int>` (currently backed by an in‑memory repository; returns `{"exists": false}` unless seeded)
+- Unified error format:
+  - `{"error": "<code>", "message": "<text>"}`
+  - Custom handlers for:
+    - HTTP errors (including 404)
+    - Validation errors (422)
+- Debug routes are included **only in dev** (`SECUREPASSVE_ENV=dev`)
+  - `GET /api/v1/debug/echo`
+  - `GET /api/v1/debug/error`
+- **Sentinel v1** logging:
+  - Structured JSON logs (timestamp, level, logger, file, line, function, plus `extra` fields)
+  - Request correlation via `X-Request-ID` (middleware)
+  - Access log event: `request_completed` with request_id, method, path, status_code, duration_ms
 
 ---
 
-## Setup
+## Setup (Windows / PowerShell)
 
-From the repository root:
-
-```bash
-cd backend
-python -m venv .venv
-```
-
-Activate the virtual environment (Windows PowerShell):
+Create and activate a virtual environment inside `backend/`:
 
 ```powershell
+cd backend
+py -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
 Install dependencies (editable + dev extras):
 
-```bash
+```powershell
 pip install -e ".[dev]"
+```
+
+---
+
+## Run the backend
+
+From `backend/`:
+
+```powershell
+uvicorn securepassve_backend.main:app --reload --env-file .env
+```
+
+API docs:
+- Swagger UI: http://127.0.0.1:8000/docs
+- OpenAPI JSON: http://127.0.0.1:8000/openapi.json
+
+---
+
+## Tests
+
+Run tests from `backend/`:
+
+```powershell
+pytest -q tests
 ```
 
 ---
 
 ## Environment variables
 
-The backend reads configuration from environment variables.
-
-Currently used:
-
-- `SECUREPASSVE_ENV` – application environment (`dev` | `prod`)
-
-Recommended local setup:
-
-Create a local `.env` file in `backend/` (not committed):
-
-```env
-SECUREPASSVE_ENV=dev
-```
-
-Start the server with:
-
-```bash
-uvicorn securepassve_backend.main:app --reload --env-file .env
-```
+- `SECUREPASSVE_ENV`
+  - `dev` (default) enables debug routes
+  - `prod` disables debug routes
+- `SECUREPASSVE_LOG_LEVEL`
+  - e.g. `DEBUG`, `INFO`, `WARNING`, `ERROR` (default: `INFO`)
 
 ---
 
-## API documentation
+## Notes
 
-Interactive API docs are available at:
-
-```
-http://127.0.0.1:8000/docs
-```
+- Prefer structured logs via `extra={...}` for filterable fields.
 
 ---
 
 ## License
 
 MIT
-
