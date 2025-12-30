@@ -6,7 +6,7 @@ import os
 import sys
 from datetime import datetime, timezone
 
-from securepassve_backend.core.request_context import request_id_ctx
+from securepassve_backend.core.request.request_context import request_id_ctx
 
 class RequestIDFilter(logging.Filter):
     def filter(self, record: logging.LogRecord) -> bool:

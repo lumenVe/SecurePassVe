@@ -6,7 +6,7 @@ from fastapi.exceptions import RequestValidationError
 
 from securepassve_backend.api.v1.router import router as v1_router
 from securepassve_backend.core.exceptions import ApiError
-from securepassve_backend.core.sentinel import configure_sentinel_logging
+from securepassve_backend.core.sentinel.sentinel import configure_sentinel_logging
 
 app = FastAPI(title="SecurePassVe API")
 
@@ -15,7 +15,7 @@ app.include_router(v1_router, prefix="/api/v1")
 configure_sentinel_logging()
 
 import logging
-from securepassve_backend.core.request_id import RequestIDMiddleware
+from securepassve_backend.core.request.request_id import RequestIDMiddleware
 access_log = logging.getLogger("securepassve_backend.access")
 
 app.add_middleware(RequestIDMiddleware, logger=access_log)

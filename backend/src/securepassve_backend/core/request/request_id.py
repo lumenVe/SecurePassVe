@@ -6,7 +6,7 @@ from typing import Callable
 
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
-from securepassve_backend.core.request_context import request_id_ctx
+from securepassve_backend.core.request.request_context import request_id_ctx
 
 
 class RequestIDMiddleware(BaseHTTPMiddleware):
